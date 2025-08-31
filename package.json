@@ -1,0 +1,21 @@
+{
+  "name": "proyecto-practicas-iniciales",
+  "version": "1.0.0",
+  "description": "Proyecto para ver como son los catedraticos de la carrera de ciencias y sistemas",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David Quiñonez",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.3",
+    "nodemon": "^3.1.10"
+  }
+}
