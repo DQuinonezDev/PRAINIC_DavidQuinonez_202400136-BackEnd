@@ -31,4 +31,4 @@ const obtenerProfesores = async (req, res) => {
     }
 };
 
-module.exports = { crearProfesor, obtenerProfesores };
+module.exports = { crearProfesor, obtenerProfesores  };
