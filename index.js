@@ -1,7 +1,7 @@
 require('dotenv').config();
 
-// const Server = require('./Server/server');
+const Server = require('./Server/server');
 
-// const servidorIniciado = new Server();
+const servidorIniciado = new Server();
 
-// servidorIniciado.listen();
+servidorIniciado.listen();
