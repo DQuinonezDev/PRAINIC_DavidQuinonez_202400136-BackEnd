@@ -24,6 +24,15 @@ class Profesor {
         const [rows] = await pool.query(`SELECT * FROM profesores`);
         return rows;
     }
+
+    static async existePorId(id_profesor) {
+    const pool = await dbmysql();
+    const [rows] = await pool.query(
+        `SELECT * FROM profesores WHERE id_profesor = ?`,
+        [id_profesor]
+    );
+    return rows.length > 0;
+}
 }
 
 module.exports = Profesor;
