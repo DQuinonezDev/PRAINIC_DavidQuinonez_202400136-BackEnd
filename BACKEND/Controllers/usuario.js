@@ -1,5 +1,6 @@
 const Usuario = require('../Models/usuario')
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const crearUsuario = async (req, res) => {
     try {
@@ -53,8 +54,15 @@ const loginUsuario = async (req, res) => {
         if (!esValido) {
             return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
         }
+        // Generar token con id_usuario y correo
+        const token = jwt.sign(
+            { id_usuario: usuario.id_usuario, correo: usuario.correo },
+            process.env.JWT_SECRET, 
+            { expiresIn: '12h' } // el token dura 12 horas
+        );
 
-        res.json({ mensaje: 'Login exitoso', usuario });
+        res.json({ mensaje: 'Login exitoso', token });
+
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
