@@ -57,7 +57,7 @@ const loginUsuario = async (req, res) => {
         // Generar token con id_usuario y correo
         const token = jwt.sign(
             { id_usuario: usuario.id_usuario, correo: usuario.correo },
-            process.env.JWT_SECRET, 
+            process.env.JWT_SECRET,
             { expiresIn: '12h' } // el token dura 12 horas
         );
 
@@ -77,4 +77,18 @@ const obtenerUsuarios = async (req, res) => {
     }
 };
 
-module.exports = { crearUsuario, loginUsuario, obtenerUsuarios }
+const obtenerPerfilUsuario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const perfil = await Usuario.obtenerPerfil(id);
+
+        if (!perfil) {
+            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+        }
+
+        res.json(perfil);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+module.exports = { crearUsuario, loginUsuario, obtenerUsuarios, obtenerPerfilUsuario }

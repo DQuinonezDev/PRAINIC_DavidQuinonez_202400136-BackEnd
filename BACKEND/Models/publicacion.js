@@ -5,7 +5,7 @@ class Publicacion {
         const pool = await dbmysql();
         const [result] = await pool.query(
             `INSERT INTO publicaciones (id_usuario, id_curso, id_profesor, mensaje)
-             VALUES (?, ?, ?, ?)`,
+            VALUES (?, ?, ?, ?)`,
             [id_usuario, id_curso || null, id_profesor || null, mensaje]
         );
         return result.insertId;
@@ -26,6 +26,15 @@ class Publicacion {
         `);
         return rows;
     }
+
+    static async perteneceAUsuario(id_publicacion, id_usuario) {
+    const pool = await dbmysql();
+    const [rows] = await pool.query(
+      `SELECT 1 FROM publicaciones WHERE id_publicacion = ? AND id_usuario = ? LIMIT 1`,
+      [id_publicacion, id_usuario]
+    );
+    return rows.length > 0;
+  }
 }
 
 module.exports = Publicacion;
