@@ -34,35 +34,31 @@ const crearUsuario = async (req, res) => {
 
 const loginUsuario = async (req, res) => {
     try {
-        const { registro_academico, contrasena } = req.body;
+        const { correo, registro_academico, contrasena } = req.body;
 
-        if (!registro_academico || !contrasena) {
-            return res.status(400).json({ mensaje: 'registro academico y contraseña son obligatorios' });
+        if ((!correo && !registro_academico) || !contrasena) {
+            return res.status(400).json({ mensaje: 'Correo o registro académico y contraseña son obligatorios' });
         }
 
-        const usuario = await Usuario.buscarPorCarnet(registro_academico);
+        // Busca por correo si viene, si no por carnet
+        const usuario = correo
+            ? await Usuario.buscarPorCorreo(correo)
+            : await Usuario.buscarPorCarnet(registro_academico);
 
-        if (!usuario) {
-            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-        }
-
-        if (!usuario.contrasena) {
-            return res.status(500).json({ mensaje: 'Error: el usuario no tiene contraseña registrada' });
-        }
+        if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+        if (!usuario.contrasena) return res.status(500).json({ mensaje: 'El usuario no tiene contraseña registrada' });
 
         const esValido = await bcrypt.compare(contrasena, usuario.contrasena);
-        if (!esValido) {
-            return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
-        }
-        // Generar token con id_usuario y correo
+        if (!esValido) return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
+
+        const secret = process.env.JWT_SECRET || 'dev_secret_unsafe'; // evita undefined
         const token = jwt.sign(
             { id_usuario: usuario.id_usuario, correo: usuario.correo },
-            process.env.JWT_SECRET,
-            { expiresIn: '12h' } // el token dura 12 horas
+            secret,
+            { expiresIn: '12h' }
         );
 
         res.json({ mensaje: 'Login exitoso', token });
-
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -81,11 +77,7 @@ const obtenerPerfilUsuario = async (req, res) => {
     try {
         const { id } = req.params;
         const perfil = await Usuario.obtenerPerfil(id);
-
-        if (!perfil) {
-            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-        }
-
+        if (!perfil) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
         res.json(perfil);
     } catch (error) {
         res.status(500).json({ error: error.message });
