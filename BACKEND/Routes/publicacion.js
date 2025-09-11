@@ -4,9 +4,9 @@ const router = Router();
 const verificarToken = require('../Middleware/auth');
 
 
-router.post('/crearPublicacion',verificarToken, crearPublicacion);
-router.get('/',verificarToken, obtenerPublicaciones);
-router.put('/editar/:id', verificarToken, actualizarPublicacion);
-router.delete('/eliminar/:id', verificarToken, eliminarPublicacion);
+router.post('/crearPublicacion', verificarToken,crearPublicacion);
+router.get('/', obtenerPublicaciones);
+router.put('/editar/:id', actualizarPublicacion);
+router.delete('/eliminar/:id', eliminarPublicacion);
 
 module.exports = router;

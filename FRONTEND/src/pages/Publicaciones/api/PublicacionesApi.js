@@ -1,21 +1,25 @@
 import { apiClient } from '../../_apiClient';
 
-export const getPublicaciones = async () => {
+// Obtener publicaciones
+export async function getPublicaciones() {
     const { data } = await apiClient.get('/publicaciones');
     return data;
-};
+}
 
-export const crearPublicacion = async (payload) => {
+// Crear publicación
+export async function createPublicacion(payload) {
     const { data } = await apiClient.post('/publicaciones/crearPublicacion', payload);
     return data;
-};
+}
 
-export const editarPublicacion = async (id, payload) => {
+// Editar publicación
+export async function updatePublicacion(id, payload) {
     const { data } = await apiClient.put(`/publicaciones/editar/${id}`, payload);
     return data;
-};
+}
 
-export const eliminarPublicacion = async (id, payload) => {
-    const { data } = await apiClient.delete(`/publicaciones/eliminar/${id}`, { data: payload });
+// Eliminar publicación
+export async function deletePublicacion(id) {
+    const { data } = await apiClient.delete(`/publicaciones/eliminar/${id}`);
     return data;
-};
+}

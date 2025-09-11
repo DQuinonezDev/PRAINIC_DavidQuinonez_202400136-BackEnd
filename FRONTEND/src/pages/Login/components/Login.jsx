@@ -4,6 +4,7 @@ import { loginApi } from '../api/LoginApi';
 import logo from '../../../assets/logo-usac.png';
 
 export function Login() {
+
     const [identificador, setIdentificador] = useState('');
     const [contrasena, setContrasena] = useState('');
     const [recordar, setRecordar] = useState(false);
@@ -29,10 +30,15 @@ export function Login() {
         }
         try {
             setLoading(true);
-            const { token } = await loginApi({ identificador, contrasena });
-            localStorage.setItem('token', token);
+            const res = await loginApi({ identificador, contrasena });
+
+            // Guardar token e id_usuario
+            localStorage.setItem('token', res.token);
+            localStorage.setItem('id_usuario', res.id_usuario);
+
             if (recordar) localStorage.setItem('remember_user', identificador);
             else localStorage.removeItem('remember_user');
+
             navigate('/cursos');
         } catch (err) {
             setError(err?.response?.data?.mensaje || 'No se pudo iniciar sesión.');
@@ -40,6 +46,7 @@ export function Login() {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="min-h-screen relative flex items-center justify-center bg-white px-4 overflow-hidden">
@@ -69,7 +76,7 @@ export function Login() {
                         className="h-20 w-200 object-contain drop-shadow"
                         onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     />
-                    
+
                 </div>
 
                 <h1 className="text-center text-lg font-semibold tracking-wide text-gray-900">

@@ -1,24 +1,29 @@
 const Publicacion = require('../Models/publicacion');
 
 const crearPublicacion = async (req, res) => {
-    try {
-        const { id_usuario, id_curso, id_profesor, mensaje } = req.body;
+  try {
+    const { id_curso = null, id_profesor = null, mensaje } = req.body;
+    const { id_usuario } = req.usuario; // ahora sí viene del token
 
-        if (!id_usuario || !mensaje) {
-            return res.status(400).json({ mensaje: 'Usuario y mensaje son obligatorios' });
-        }
-
-        if (!id_curso && !id_profesor) {
-            return res.status(400).json({ mensaje: 'Debe seleccionar un curso o un profesor' });
-        }
-
-        const id = await Publicacion.crear({ id_usuario, id_curso, id_profesor, mensaje });
-
-        res.status(201).json({ mensaje: 'Publicación creada correctamente', id });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    if (!mensaje || mensaje.trim() === '') {
+      return res.status(400).json({ mensaje: 'El mensaje es obligatorio' });
     }
+
+    const id = await Publicacion.crear({
+      id_usuario,
+      id_curso: id_curso || null,
+      id_profesor: id_profesor || null,
+      mensaje
+    });
+
+    res.status(201).json({ mensaje: 'Publicación creada', id });
+  } catch (error) {
+    console.error("❌ Error en crearPublicacion:", error);
+    res.status(500).json({ error: error.message });
+  }
 };
+
+
 
 const obtenerPublicaciones = async (req, res) => {
     try {
@@ -71,4 +76,4 @@ const eliminarPublicacion = async (req, res) => {
 
 
 
-module.exports = { crearPublicacion, obtenerPublicaciones, actualizarPublicacion, eliminarPublicacion};
+module.exports = { crearPublicacion, obtenerPublicaciones, actualizarPublicacion, eliminarPublicacion };

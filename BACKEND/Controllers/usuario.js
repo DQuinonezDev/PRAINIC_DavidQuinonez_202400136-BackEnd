@@ -54,11 +54,15 @@ const loginUsuario = async (req, res) => {
         const secret = process.env.JWT_SECRET || 'dev_secret_unsafe'; // evita undefined
         const token = jwt.sign(
             { id_usuario: usuario.id_usuario, correo: usuario.correo },
-            secret,
+            process.env.JWT_SECRET,
             { expiresIn: '12h' }
         );
 
-        res.json({ mensaje: 'Login exitoso', token });
+        res.json({
+            mensaje: 'Login exitoso',
+            token,
+            id_usuario: usuario.id_usuario
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -80,7 +84,35 @@ const obtenerPerfilUsuario = async (req, res) => {
         if (!perfil) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
         res.json(perfil);
     } catch (error) {
+        console.error("❌ Error en obtenerPerfilUsuario:", error); 
         res.status(500).json({ error: error.message });
     }
 };
-module.exports = { crearUsuario, loginUsuario, obtenerUsuarios, obtenerPerfilUsuario }
+
+
+const actualizarPerfilUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombres, apellidos, correo, contrasena } = req.body;
+
+    const data = {};
+    if (nombres) data.nombres = nombres;
+    if (apellidos) data.apellidos = apellidos;
+    if (correo) data.correo = correo;
+    if (contrasena) {
+      const bcrypt = require('bcryptjs');
+      data.contrasena = await bcrypt.hash(contrasena, 10);
+    }
+
+    const actualizado = await Usuario.actualizarPerfil(id, data);
+    if (!actualizado) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    res.json({ mensaje: 'Perfil actualizado correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { crearUsuario, loginUsuario, obtenerUsuarios, obtenerPerfilUsuario, actualizarPerfilUsuario }

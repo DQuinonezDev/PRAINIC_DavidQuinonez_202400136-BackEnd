@@ -1,21 +1,31 @@
-import { apiClient } from '../../_apiClient';
+import { apiClient } from "../../_apiClient";
 
-export const getComentariosDePublicacion = async (id_publicacion) => {
-    const { data } = await apiClient.get(`/comentarios/${id_publicacion}`);
-    return data;
-};
+// Obtener comentarios de una publicación
+export async function getComentarios(id_publicacion) {
+  const { data } = await apiClient.get(`/comentarios/${id_publicacion}`);
+  return data;
+}
 
-export const crearComentario = async (payload) => {
-    const { data } = await apiClient.post('/comentarios/crearComentario', payload);
-    return data;
-};
+// Crear comentario
+export async function createComentario({ id_publicacion, mensaje }) {
+  const { data } = await apiClient.post(`/comentarios/crearComentario`, {
+    id_publicacion,
+    
+    mensaje,
+  });
+  return data;
+}
 
-export const editarComentario = async (id, payload) => {
-    const { data } = await apiClient.put(`/comentarios/editar/${id}`, payload);
-    return data;
-};
+// Editar comentario
+export async function updateComentario(id_comentario, { mensaje }) {
+  const { data } = await apiClient.put(`/comentarios/editar/${id_comentario}`, {
+    mensaje,
+  });
+  return data;
+}
 
-export const eliminarComentario = async (id, payload) => {
-    const { data } = await apiClient.delete(`/comentarios/eliminar/${id}`, { data: payload });
-    return data;
-};
+// Eliminar comentario
+export async function deleteComentario(id_comentario) {
+  const { data } = await apiClient.delete(`/comentarios/eliminar/${id_comentario}`);
+  return data;
+}

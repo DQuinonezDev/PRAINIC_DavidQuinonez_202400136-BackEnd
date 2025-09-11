@@ -41,7 +41,7 @@ class Server {
         this.app.use(this.paths.cursos, require('../Routes/curso'));
         this.app.use(this.paths.publicaciones, require('../Routes/publicacion'));
         this.app.use(this.paths.comentarios, require('../Routes/comentario'));
-        // this.app.use(this.paths.cursosAprobados, require('../routes/cursosAprobados'));
+        this.app.use(this.paths.cursosAprobados, require('../Routes/cursoAprobado'));
     }
 
     listen() {

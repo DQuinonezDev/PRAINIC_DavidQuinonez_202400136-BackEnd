@@ -5,12 +5,17 @@ export const getUsuarios = async () => {
     return data;
 };
 
-export const getPerfilUsuario = async (id) => {
-    const { data } = await apiClient.get(`/usuarios/perfil/${id}`);
+export async function getPerfil(id) {
+    const token = localStorage.getItem("token");
+    const { data } = await apiClient.get(`/usuarios/perfil/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}` 
+        }
+    });
     return data;
-};
+}
 
-// export const updateUsuario = async (id, payload) => {
-//     const { data } = await apiClient.put(`/usuarios/${id}`, payload);
-//     return data;
-// };
+export async function updatePerfil(id, payload) {
+    const { data } = await apiClient.put(`/usuarios/perfil/${id}`, payload);
+    return data;
+}

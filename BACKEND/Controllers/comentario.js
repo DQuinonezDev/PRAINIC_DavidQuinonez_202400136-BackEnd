@@ -2,19 +2,20 @@ const Comentario = require('../Models/comentario');
 
 const crearComentario = async (req, res) => {
     try {
-        const { id_publicacion, id_usuario, mensaje } = req.body;
+        const { id_publicacion, mensaje } = req.body;
+        const id_usuario = req.usuario.id_usuario; 
 
-        if (!id_publicacion || !id_usuario || !mensaje) {
-            return res.status(400).json({ mensaje: 'Todos los campos son obligatorios' });
+        if (!mensaje || !id_publicacion) {
+            return res.status(400).json({ mensaje: 'Datos incompletos' });
         }
 
-        const id = await Comentario.crear({ id_publicacion, id_usuario, mensaje });
-
-        res.status(201).json({ mensaje: 'Comentario agregado correctamente', id });
+        const id = await Comentario.crear({ id_usuario, id_publicacion, mensaje });
+        res.status(201).json({ mensaje: 'Comentario creado', id });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 const obtenerComentarios = async (req, res) => {
     try {

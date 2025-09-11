@@ -1,40 +1,44 @@
 const CursoAprobado = require('../Models/cursoAprobado');
 
-const agregarCursoAprobado = async (req, res) => {
+const asignarCurso = async (req, res) => {
     try {
-        const { id_usuario, id_curso } = req.body;
+        const { id_curso } = req.body;
+        const { id_usuario } = req.usuario; // viene del token
 
-        if (!id_usuario || !id_curso) {
-            return res.status(400).json({ mensaje: 'id_usuario e id_curso son obligatorios' });
+        if (!id_curso) {
+            return res.status(400).json({ mensaje: 'El id_curso es obligatorio' });
         }
 
-        const yaExiste = await CursoAprobado.existe(id_usuario, id_curso);
-        if (yaExiste) {
-            return res.status(400).json({ mensaje: 'El curso ya fue aprobado por este usuario' });
-        }
-
-        await CursoAprobado.agregar({ id_usuario, id_curso });
-
-        res.status(201).json({ mensaje: 'Curso aprobado agregado correctamente' });
+        await CursoAprobado.asignar({ id_usuario, id_curso });
+        res.status(201).json({ mensaje: 'Curso aprobado asignado' });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
 };
 
-const obtenerCursosAprobados = async (req, res) => {
+const obtenerCursosPorUsuario = async (req, res) => {
     try {
-        const { id_usuario } = req.params;
-
-        if (!id_usuario) {
-            return res.status(400).json({ mensaje: 'Se requiere id_usuario' });
-        }
-
+        const { id_usuario } = req.usuario; // del token
         const cursos = await CursoAprobado.obtenerPorUsuario(id_usuario);
-
         res.json(cursos);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-module.exports = { agregarCursoAprobado, obtenerCursosAprobados };
+const eliminarCurso = async (req, res) => {
+    try {
+        const { id } = req.params; // id_curso
+        const { id_usuario } = req.usuario;
+
+        const ok = await CursoAprobado.eliminar({ id_usuario, id_curso: id });
+        if (!ok) return res.status(404).json({ mensaje: 'No se encontró el curso aprobado' });
+
+        res.json({ mensaje: 'Curso aprobado eliminado' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = { asignarCurso, obtenerCursosPorUsuario, eliminarCurso };
